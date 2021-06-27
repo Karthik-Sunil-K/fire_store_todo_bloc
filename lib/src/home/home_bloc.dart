@@ -10,11 +10,11 @@ class HomeBloc implements BlocBase {
     db.init().listen((data) => _inFirestore.add(data));
   }
 
-  String id;
+  String? id;
 
-  final _idController = BehaviorSubject<String>();
-  Stream<String> get outId => _idController.stream;
-  Sink<String> get _inId => _idController.sink;
+  final _idController = BehaviorSubject<String?>();
+  Stream<String?> get outId => _idController.stream;
+  Sink<String?> get _inId => _idController.sink;
 
   final _firestoreController = BehaviorSubject<QuerySnapshot>();
   Stream<QuerySnapshot> get outFirestore => _firestoreController.stream;
@@ -34,7 +34,7 @@ class HomeBloc implements BlocBase {
     _inId.add(null);
   }
 
-  void createData(String name) async {
+  void createData(String? name) async {
     String id = await db.createData(name);
     this.id = id;
     _inId.add(this.id);

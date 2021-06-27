@@ -1,5 +1,5 @@
-import 'package:firestore_crud/bloc_provider.dart';
-import 'package:firestore_crud/src/home/home_bloc.dart';
+import '../../bloc_provider.dart';
+import 'home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,10 +11,10 @@ class FirestoreCRUDPage extends StatefulWidget {
 }
 
 class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
-  String name;
+  String? name;
   final _formKey = GlobalKey<FormState>();
 
-  Card buildItem(DocumentSnapshot doc, HomeBloc bloc) {
+  buildItem(QueryDocumentSnapshot<Map<String, dynamic>> doc, HomeBloc bloc) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -22,11 +22,11 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'name: ${doc.data['name']}',
+              'name: ${doc.data()['name']}',
               style: TextStyle(fontSize: 24),
             ),
             Text(
-              'todo: ${doc.data['todo']}',
+              'todo: ${doc.data()['todo']}',
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 12),
@@ -35,7 +35,8 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
               children: <Widget>[
                 FlatButton(
                   onPressed: () => bloc.updateData(doc),
-                  child: Text('Update todo', style: TextStyle(color: Colors.white)),
+                  child: Text('Update todo',
+                      style: TextStyle(color: Colors.white)),
                   color: Colors.green,
                 ),
                 SizedBox(width: 8),
@@ -60,7 +61,7 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
         filled: true,
       ),
       validator: (value) {
-        if (value.isEmpty) {
+        if (value!.isEmpty) {
           return 'Please enter some text';
         }
       },
@@ -90,7 +91,7 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
                 child: Text('Create', style: TextStyle(color: Colors.white)),
                 color: Colors.green,
               ),
-              StreamBuilder<String>(
+              StreamBuilder<String?>(
                 stream: bloc.outId,
                 initialData: null,
                 builder: (context, snapshot) {
@@ -107,7 +108,10 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
             stream: bloc.outFirestore,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Column(children: snapshot.data.documents.map((doc) => buildItem(doc, bloc)).toList());
+                return Column(
+                    children: snapshot.data!.docs
+                        .map((doc) => buildItem(doc as QueryDocumentSnapshot<Map<String, dynamic>>, bloc))
+                        .toList() as List<Widget>);
               } else {
                 return SizedBox();
               }
@@ -119,8 +123,8 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
   }
 
   void validateAndCreateData(HomeBloc bloc) async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
       bloc.createData(name);
     }
   }
