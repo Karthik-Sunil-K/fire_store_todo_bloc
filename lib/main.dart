@@ -2,8 +2,13 @@ import 'package:firestore_crud/bloc_provider.dart';
 import 'package:firestore_crud/src/home/home.dart';
 import 'package:firestore_crud/src/home/home_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(MyApp());
+Future main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
