@@ -14,7 +14,8 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
   String? name;
   final _formKey = GlobalKey<FormState>();
 
-  buildItem(QueryDocumentSnapshot<Map<String, dynamic>> doc, HomeBloc bloc) {
+  Widget buildItem(
+      QueryDocumentSnapshot<Map<String, dynamic>> doc, HomeBloc bloc) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -110,8 +111,10 @@ class FirestoreCRUDPageState extends State<FirestoreCRUDPage> {
               if (snapshot.hasData) {
                 return Column(
                     children: snapshot.data!.docs
-                        .map((doc) => buildItem(doc as QueryDocumentSnapshot<Map<String, dynamic>>, bloc))
-                        .toList() as List<Widget>);
+                        .map((doc) => buildItem(
+                            doc as QueryDocumentSnapshot<Map<String, dynamic>>,
+                            bloc))
+                        .toList());
               } else {
                 return SizedBox();
               }
